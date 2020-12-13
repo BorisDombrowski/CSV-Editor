@@ -23,9 +23,9 @@ namespace CSV_Editor
             }
         }
 
-        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OnClick_OpenFile(object sender, EventArgs e)
         {
-            if(openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 var path = openFileDialog1.FileName;
                 OpenFile(path);
@@ -39,39 +39,58 @@ namespace CSV_Editor
                 CurrentFileName = path;
                 string[] file = File.ReadAllLines(path);
 
-                int columns = file[0].Split(';').Length;
-                int rows = file.Length;
-
-                dataGridView1.RowCount = rows + 1;
-
-                for (int row = 0; row < rows; row++)
+                if (file.Length > 0)
                 {
-                    var row_content = file[row].Split(';');
-                    for (int col = 0; col < columns; col++)
+                    int columns = file[0].Split(';').Length;
+                    int rows = file.Length;
+
+                    dataGridView1.RowCount = rows + 1;
+
+                    for (int row = 0; row < rows; row++)
                     {
-                        dataGridView1.Rows[row].Cells[col].Value = row_content[col];
+                        var row_content = file[row].Split(';');
+                        for (int col = 0; col < columns; col++)
+                        {
+                            dataGridView1.Rows[row].Cells[col].Value = row_content[col];
+                        }
                     }
                 }
+                else
+                {
+                    dataGridView1.RowCount = 1;
+                }
 
-                toolStripStatusLabel2.Text = string.Format("File {0} loaded successfully!", path);
+                toolStripStatusLabel1.Text = string.Format("File {0} loaded successfully!", path);
             }
             else
             {
-                toolStripStatusLabel2.Text = "File is not exists";
+                toolStripStatusLabel1.Text = "File is not exists";
             }
         }
 
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        private void OnClick_SaveFile(object sender, EventArgs e)
         {    
             if (string.IsNullOrEmpty(CurrentFileName))            
             {
                 if(saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     CurrentFileName = saveFileDialog1.FileName;
-                }
+                    SaveFile(CurrentFileName);
+                }                
+            } 
+            else
+            {
+                SaveFile(CurrentFileName);
             }
+        }
 
-            SaveFile(CurrentFileName);
+        private void OnClick_SaveAs(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                CurrentFileName = saveFileDialog1.FileName;
+                SaveFile(CurrentFileName);
+            }
         }
 
         private void SaveFile(string path)
@@ -102,7 +121,7 @@ namespace CSV_Editor
             }
 
             File.WriteAllText(path, res);
-            toolStripStatusLabel2.Text = string.Format("File {0} saved successfully!", path);
+            toolStripStatusLabel1.Text = string.Format("File {0} saved successfully!", path);
             return;
         }
     }
