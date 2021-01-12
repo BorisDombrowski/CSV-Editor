@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.IO;
 using System.Windows.Forms;
 
@@ -12,6 +11,7 @@ namespace CSV_Editor
         public Form1()
         {
             InitializeComponent();
+            this.KeyPreview = true;
         }
 
         public Form1(string filePath)
@@ -61,6 +61,7 @@ namespace CSV_Editor
                 }
 
                 toolStripStatusLabel1.Text = string.Format("File {0} loaded successfully!", path);
+                this.Text = String.Format("CSV Editor - {0}", CurrentFileName);
             }
             else
             {
@@ -122,7 +123,18 @@ namespace CSV_Editor
 
             File.WriteAllText(path, res);
             toolStripStatusLabel1.Text = string.Format("File {0} saved successfully!", path);
+            this.Text = String.Format("CSV Editor - {0}", CurrentFileName);
             return;
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.S))
+            {
+                OnClick_SaveFile(null, null);
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }
